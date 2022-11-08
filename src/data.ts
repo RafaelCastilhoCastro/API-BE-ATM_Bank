@@ -7,7 +7,7 @@ export type transaction = {
 export type userAccount = {
     name: string,
     cpf: number,
-    birthday: string,
+    birthdate: string,
     balance: number,
     transactions: transaction[]
 }
@@ -16,7 +16,7 @@ export let users: userAccount[] = [
     {
         name: 'Maria',
         cpf: 12345678901,
-        birthday: '01/01/1950',
+        birthdate: '01/01/1950',
         balance: 1000,
         transactions: [
             {
@@ -29,7 +29,7 @@ export let users: userAccount[] = [
     {
         name: 'Martha',
         cpf: 23456789123,
-        birthday: '10/02/1960',
+        birthdate: '10/02/1960',
         balance: 100,
         transactions: [
             {
@@ -47,7 +47,7 @@ export let users: userAccount[] = [
     {
         name: 'Eva',
         cpf: 34567891234,
-        birthday: '25/07/1975',
+        birthdate: '25/07/1975',
         balance: 550,
         transactions: [
             {
