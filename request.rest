@@ -13,3 +13,6 @@ Content-Type: application/json
 }
 
 ###
+
+GET http://localhost:3003/user/balance?cpf=23456789123
+Content-Type: application/json

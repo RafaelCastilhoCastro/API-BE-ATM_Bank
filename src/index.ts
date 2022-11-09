@@ -10,6 +10,27 @@ app.get("/users", (req: Request, res: Response) => {
     res.status(200).send(users)
 })
 
+app.get("/user/balance", (req: Request, res: Response) => {
+    const cpf = Number(req.query.cpf)
+
+    let userBalance = 0
+    let userExists = false
+    for (const i of users) {
+        if (i.cpf === cpf) {
+            userBalance = i.balance
+            userExists = true
+        }
+    }
+    if (userExists) {
+        res.status(200).send(`User balance:${userBalance}`)
+    } else {
+        res.status(400).send('CPF not found.')
+    }
+
+})
+
+
+
 app.post("/users", (req: Request, res: Response) => {
     const name = req.body.name
     const cpf = req.body.cpf
