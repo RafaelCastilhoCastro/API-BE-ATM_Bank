@@ -19,20 +19,28 @@ app.post("/users", (req: Request, res: Response) => {
     const eighteenYearsInMilisec = 568080000000
     const todayInMilisec = Date.now()
 
-    if ((todayInMilisec-userBirthInMilisec)<eighteenYearsInMilisec) {
+    if ((todayInMilisec - userBirthInMilisec) < eighteenYearsInMilisec) {
         res.status(400).send("User must be over 18.")
     } else {
-        const newUser: userAccount = {
-            name,
-            cpf,
-            birthdate,
-            balance: 0,
-            transactions: []
+        let userExists = false
+        for (const i of users) {
+            if (i.cpf === cpf) {
+                userExists = true
+            }
         }
-
-        users.push(newUser)
-
-        res.status(200).send(users)
+        if (!userExists) {
+            const newUser: userAccount = {
+                name,
+                cpf,
+                birthdate,
+                balance: 0,
+                transactions: []
+            }
+            users.push(newUser)
+            res.status(200).send(users)
+        } else {
+            res.status(400).send('CPF already registered.')
+        }
     }
 })
 

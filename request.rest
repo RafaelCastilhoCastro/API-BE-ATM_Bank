@@ -8,8 +8,8 @@ Content-Type: application/json
 
 {
     "name":"Jonas",
-    "cpf": "11122233300",
-    "birthdate": "2004/11/08"
+    "cpf": 23456789123,
+    "birthdate": "2003/11/08"
 }
 
 ###
