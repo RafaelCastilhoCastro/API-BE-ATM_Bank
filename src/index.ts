@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 import cors from 'cors'
-import { userAccount, users } from "./data"
+import { userAccount, users, Transaction } from "./data"
 
 const app = express()
 app.use(express.json())
@@ -28,8 +28,6 @@ app.get("/user/balance", (req: Request, res: Response) => {
     }
 
 })
-
-
 
 app.post("/users", (req: Request, res: Response) => {
     const name = req.body.name
@@ -73,12 +71,19 @@ app.put("/user", (req:Request, res:Response)=>{
     let userFound = false
     for (const i of users) {
         if (i.name === userName && i.cpf === cpf) {
-            i.balance = i.balance+amount
             userFound = true
+            i.balance = i.balance+amount
+            i.transactions.push({
+                date: Date().slice(0,24),
+                amount: amount,
+                description: 'Depóito em Dinheiro'
+            })
         }
     }
     if (userFound) {
-        res.status(200).send(`$${amount} deposited into ${userName}'s account.`)
+        console.log(`$${amount} deposited into ${userName}'s account.`);
+        
+        res.status(200).send(users)
     } else {
         res.status(400).send("No user found.")
     }

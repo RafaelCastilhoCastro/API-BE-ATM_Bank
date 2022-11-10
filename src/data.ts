@@ -1,4 +1,4 @@
-export type transaction = {
+export type Transaction = {
     date: string,
     amount: number,
     description: string
@@ -9,7 +9,7 @@ export type userAccount = {
     cpf: number,
     birthdate: string,
     balance: number,
-    transactions: transaction[]
+    transactions: Transaction[]
 }
 
 export let users: userAccount[] = [
