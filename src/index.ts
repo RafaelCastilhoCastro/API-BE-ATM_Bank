@@ -26,7 +26,6 @@ app.get("/user/balance", (req: Request, res: Response) => {
     } else {
         res.status(400).send('CPF not found.')
     }
-
 })
 
 app.post("/users", (req: Request, res: Response) => {
@@ -63,7 +62,7 @@ app.post("/users", (req: Request, res: Response) => {
     }
 })
 
-app.put("/user", (req:Request, res:Response)=>{
+app.put("/user", (req: Request, res: Response) => {
     const userName = req.body.name
     const cpf = req.body.cpf
     const amount = req.body.amount
@@ -72,22 +71,72 @@ app.put("/user", (req:Request, res:Response)=>{
     for (const i of users) {
         if (i.name === userName && i.cpf === cpf) {
             userFound = true
-            i.balance = i.balance+amount
+            i.balance = i.balance + amount
             i.transactions.push({
-                date: Date().slice(0,24),
+                date: Date().slice(0, 24),
                 amount: amount,
                 description: 'Depóito em Dinheiro'
             })
         }
     }
     if (userFound) {
-        console.log(`$${amount} deposited into ${userName}'s account.`);
-        
+        console.log(`$${amount} deposited into ${userName}'s account.`)
+
         res.status(200).send(users)
     } else {
         res.status(400).send("No user found.")
     }
 })
+
+app.put("/user/pay", (req: Request, res: Response) => {
+    const dueDate = req.body.date
+    const description = req.body.description
+    const amount = req.body.amount
+    const cpf = req.body.cpf
+
+    let userFound = false
+    for (const i of users) {
+        if (i.cpf === cpf) {
+            userFound = true
+            i.transactions.push({
+                date: dueDate? dueDate : new Date(),
+                amount: amount,
+                description: description
+            })
+        }
+    }
+    if (userFound) {
+        console.log("New transaction added.")
+        res.status(200).send(users)
+    } else {
+        res.status(400).send("No user found.")
+    }
+})
+
+app.put("/user/update-balance", (req: Request, res: Response) => {
+    const cpf = req.body.cpf
+
+    let userFound = false
+    for (const user of users) {
+        if (user.cpf === cpf) {
+            userFound = true
+            let sumTransactions = 0
+            for (const transaction of user.transactions) {
+                if (new Date(transaction.date) < new Date()) {
+                    sumTransactions += transaction.amount
+                }
+            }
+            user.balance -= sumTransactions
+        }
+    }
+    if (userFound) {
+        console.log("User balance updated.")
+        res.status(200).send(users)
+    } else {
+        res.status(400).send("No user found.")
+    }
+})
+
 
 app.listen(3003, () => {
     console.log("Server is running in http://localhost:3003")

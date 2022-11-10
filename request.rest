@@ -26,3 +26,24 @@ Content-Type: application/json
     "cpf":12345678901,
     "amount": 1000
 }
+
+###
+
+PUT http://localhost:3003/user/pay
+Content-Type: application/json
+
+{
+    "date": "2022-12-25",
+    "description": "Credit Card",
+    "amount": 500, 
+    "cpf":12345678901
+}
+
+###
+
+PUT http://localhost:3003/user/update-balance
+Content-Type: application/json
+
+{
+    "cpf":23456789123
+}
