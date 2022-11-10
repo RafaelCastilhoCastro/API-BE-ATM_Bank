@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     "name":"Jonas",
-    "cpf": 23456789123,
+    "cpf": 234567891231,
     "birthdate": "2003/11/08"
 }
 
@@ -16,3 +16,13 @@ Content-Type: application/json
 
 GET http://localhost:3003/user/balance?cpf=23456789123
 Content-Type: application/json
+
+###
+PUT http://localhost:3003/user
+Content-Type: application/json
+
+{
+    "name":"Maria",
+    "cpf":12345678901,
+    "amount": 1000
+}

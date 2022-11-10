@@ -65,6 +65,25 @@ app.post("/users", (req: Request, res: Response) => {
     }
 })
 
+app.put("/user", (req:Request, res:Response)=>{
+    const userName = req.body.name
+    const cpf = req.body.cpf
+    const amount = req.body.amount
+
+    let userFound = false
+    for (const i of users) {
+        if (i.name === userName && i.cpf === cpf) {
+            i.balance = i.balance+amount
+            userFound = true
+        }
+    }
+    if (userFound) {
+        res.status(200).send(`$${amount} deposited into ${userName}'s account.`)
+    } else {
+        res.status(400).send("No user found.")
+    }
+})
+
 app.listen(3003, () => {
     console.log("Server is running in http://localhost:3003")
 })
