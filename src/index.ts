@@ -94,30 +94,40 @@ app.put("/user/pay", (req: Request, res: Response) => {
     const amount = req.body.amount
     const cpf = req.body.cpf
 
-    const dueDateInMilisec = new Date(dueDate).getTime()
-    const milisec23_59 = 84924000
-    const dateCheck = dueDateInMilisec + milisec23_59 >= new Date().getTime()
+    let errorCode = 401
+    try {
+        const dueDateInMilisec = new Date(dueDate).getTime()
+        const milisec23_59 = 84924000
+        const dateCheck = dueDateInMilisec + milisec23_59 >= new Date().getTime()
 
-    if (dateCheck) {
         let userFound = false
+        let enoughBalance = false
         for (const i of users) {
             if (i.cpf === cpf) {
                 userFound = true
-                i.transactions.push({
-                    date: dueDate ? dueDate : new Date(),
-                    amount: amount,
-                    description: description
-                })
+                if (i.balance >= amount) {
+                    enoughBalance = true
+                    i.transactions.push({
+                        date: dueDate ? dueDate : new Date(),
+                        amount: amount,
+                        description: description
+                    })
+                }
             }
         }
-        if (userFound) {
-            console.log("New transaction added.")
-            res.status(200).send(users)
-        } else {
-            res.status(400).send("No user found.")
+        if (!dateCheck) {
+            throw new Error("Overdue bills can't be accepted.")
         }
-    } else {
-        res.status(400).send("Overdue bills can't be accepted.")
+        if (!userFound) {
+            throw new Error("User not found.")
+        }
+        if (!enoughBalance) {
+            throw new Error("Not enough balance.")
+        }
+        console.log("New transaction added.")
+        res.status(200).send(users)
+    } catch (error: any) {
+        res.status(errorCode).send(error.message)
     }
 })
 

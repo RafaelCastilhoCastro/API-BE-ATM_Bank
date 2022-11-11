@@ -41,7 +41,7 @@ Content-Type: application/json
 {
     "date": "2022-11-10",
     "description": "Credit Card",
-    "amount": 500, 
+    "amount": 1000, 
     "cpf":12345678901
 }
 
