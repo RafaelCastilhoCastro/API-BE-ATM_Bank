@@ -1,8 +1,10 @@
+# Get all users
 GET http://localhost:3003/users
 Content-Type: application/json
 
 ###
 
+# Add new user
 POST http://localhost:3003/users
 Content-Type: application/json
 
@@ -14,10 +16,13 @@ Content-Type: application/json
 
 ###
 
+# Get user balance
 GET http://localhost:3003/user/balance?cpf=23456789123
 Content-Type: application/json
 
 ###
+
+# Deposit into user's account
 PUT http://localhost:3003/user
 Content-Type: application/json
 
@@ -29,11 +34,12 @@ Content-Type: application/json
 
 ###
 
+# Add a transaction to a user history
 PUT http://localhost:3003/user/pay
 Content-Type: application/json
 
 {
-    "date": "2022-12-25",
+    "date": "2022-11-10",
     "description": "Credit Card",
     "amount": 500, 
     "cpf":12345678901
@@ -41,6 +47,7 @@ Content-Type: application/json
 
 ###
 
+# Update user balance according to it's transactions
 PUT http://localhost:3003/user/update-balance
 Content-Type: application/json
 

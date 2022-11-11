@@ -94,22 +94,30 @@ app.put("/user/pay", (req: Request, res: Response) => {
     const amount = req.body.amount
     const cpf = req.body.cpf
 
-    let userFound = false
-    for (const i of users) {
-        if (i.cpf === cpf) {
-            userFound = true
-            i.transactions.push({
-                date: dueDate? dueDate : new Date(),
-                amount: amount,
-                description: description
-            })
+    const dueDateInMilisec = new Date(dueDate).getTime()
+    const milisec23_59 = 84924000
+    const dateCheck = dueDateInMilisec + milisec23_59 >= new Date().getTime()
+
+    if (dateCheck) {
+        let userFound = false
+        for (const i of users) {
+            if (i.cpf === cpf) {
+                userFound = true
+                i.transactions.push({
+                    date: dueDate ? dueDate : new Date(),
+                    amount: amount,
+                    description: description
+                })
+            }
         }
-    }
-    if (userFound) {
-        console.log("New transaction added.")
-        res.status(200).send(users)
+        if (userFound) {
+            console.log("New transaction added.")
+            res.status(200).send(users)
+        } else {
+            res.status(400).send("No user found.")
+        }
     } else {
-        res.status(400).send("No user found.")
+        res.status(400).send("Overdue bills can't be accepted.")
     }
 })
 
