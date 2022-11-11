@@ -1,29 +1,29 @@
-# Get all users
-GET http://localhost:3003/users
+# Get all accounts
+GET http://localhost:3003/accounts
 Content-Type: application/json
 
 ###
 
-# Add new user
-POST http://localhost:3003/users
+# Get account balance
+GET http://localhost:3003/account/balance?cpf=23456789123
+Content-Type: application/json
+
+###
+
+# Add new account
+POST http://localhost:3003/accounts
 Content-Type: application/json
 
 {
-    "name":"Jonas",
+    "name":"Mia",
     "cpf": 234567891231,
     "birthdate": "2003/11/08"
 }
 
 ###
 
-# Get user balance
-GET http://localhost:3003/user/balance?cpf=23456789123
-Content-Type: application/json
-
-###
-
-# Deposit into user's account
-PUT http://localhost:3003/user
+# Add a deposit to transactions history
+PUT http://localhost:3003/account
 Content-Type: application/json
 
 {
@@ -34,23 +34,37 @@ Content-Type: application/json
 
 ###
 
-# Add a transaction to a user history
-PUT http://localhost:3003/user/pay
+# Add a debt to transactions history
+PUT http://localhost:3003/account/pay
 Content-Type: application/json
 
 {
-    "date": "2022-11-10",
+    "date": "2022-11-11",
     "description": "Credit Card",
-    "amount": 1000, 
+    "amount": -1000, 
     "cpf":12345678901
 }
 
 ###
 
-# Update user balance according to it's transactions
-PUT http://localhost:3003/user/update-balance
+# Update account balance according to transactions history
+PUT http://localhost:3003/account/update-balance
 Content-Type: application/json
 
 {
-    "cpf":23456789123
+    "cpf":12345678901
+}
+
+###
+
+# Add transfer between accounts to transactions history
+POST http://localhost:3003/transfer
+Content-Type: application/json
+
+{
+    "senderName":"Maria",
+    "senderCpf":12345678901,
+    "recipientName":"Belle",
+    "recipientCpf":23456789123,
+    "amount":1000
 }

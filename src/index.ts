@@ -1,110 +1,111 @@
 import express, { Request, Response } from "express"
 import cors from 'cors'
-import { userAccount, users, Transaction } from "./data"
+import { userAccount, accounts } from "./data"
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-app.get("/users", (req: Request, res: Response) => {
-    res.status(200).send(users)
+// Get all accounts
+app.get("/accounts", (req: Request, res: Response) => {
+    res.status(200).send(accounts)
 })
 
-app.get("/user/balance", (req: Request, res: Response) => {
+// Get account balance
+app.get("/account/balance", (req: Request, res: Response) => {
     const cpf = Number(req.query.cpf)
 
-    let userBalance = 0
-    let userExists = false
-    for (const i of users) {
-        if (i.cpf === cpf) {
-            userBalance = i.balance
-            userExists = true
+    let accountBalance = 0
+    let accountExists = false
+    for (const account of accounts) {
+        if (account.cpf === cpf) {
+            accountBalance = account.balance
+            accountExists = true
         }
     }
-    if (userExists) {
-        res.status(200).send(`User balance:${userBalance}`)
+    if (accountExists) {
+        res.status(200).send(`Account balance:${accountBalance}`)
     } else {
         res.status(400).send('CPF not found.')
     }
 })
 
-app.post("/users", (req: Request, res: Response) => {
+// Add new account
+app.post("/accounts", (req: Request, res: Response) => {
     const name = req.body.name
     const cpf = req.body.cpf
     const birthdate = req.body.birthdate
 
-    const userBirthInMilisec = new Date(birthdate).getTime()
+    const accountBirthInMilisec = new Date(birthdate).getTime()
     const eighteenYearsInMilisec = 568080000000
     const todayInMilisec = Date.now()
 
-    if ((todayInMilisec - userBirthInMilisec) < eighteenYearsInMilisec) {
-        res.status(400).send("User must be over 18.")
+    if ((todayInMilisec - accountBirthInMilisec) < eighteenYearsInMilisec) {
+        res.status(400).send("account must be over 18.")
     } else {
-        let userExists = false
-        for (const i of users) {
-            if (i.cpf === cpf) {
-                userExists = true
+        let accountExists = false
+        for (const account of accounts) {
+            if (account.cpf === cpf) {
+                accountExists = true
             }
         }
-        if (!userExists) {
-            const newUser: userAccount = {
+        if (!accountExists) {
+            const newaccount: userAccount = {
                 name,
                 cpf,
                 birthdate,
                 balance: 0,
                 transactions: []
             }
-            users.push(newUser)
-            res.status(200).send(users)
+            accounts.push(newaccount)
+            res.status(200).send(accounts)
         } else {
             res.status(400).send('CPF already registered.')
         }
     }
 })
 
-app.put("/user", (req: Request, res: Response) => {
-    const userName = req.body.name
+// Add a deposit to transactions history
+app.put("/account", (req: Request, res: Response) => {
+    const accountName = req.body.name
     const cpf = req.body.cpf
     const amount = req.body.amount
 
-    let userFound = false
-    for (const i of users) {
-        if (i.name === userName && i.cpf === cpf) {
-            userFound = true
-            i.balance = i.balance + amount
-            i.transactions.push({
-                date: Date().slice(0, 24),
+    let accountFound = false
+    for (const account of accounts) {
+        if (account.name === accountName && account.cpf === cpf) {
+            accountFound = true
+            account.transactions.push({
+                date: Date(),
                 amount: amount,
-                description: 'Depóito em Dinheiro'
+                description: 'Deposit in cash.'
             })
         }
     }
-    if (userFound) {
-        console.log(`$${amount} deposited into ${userName}'s account.`)
-
-        res.status(200).send(users)
+    if (accountFound) {
+        res.status(200).send(accounts)
     } else {
-        res.status(400).send("No user found.")
+        res.status(400).send("No account found.")
     }
 })
 
-app.put("/user/pay", (req: Request, res: Response) => {
+// Add a debt to transactions history
+app.put("/account/pay", (req: Request, res: Response) => {
     const dueDate = req.body.date
     const description = req.body.description
     const amount = req.body.amount
     const cpf = req.body.cpf
 
-    let errorCode = 401
     try {
         const dueDateInMilisec = new Date(dueDate).getTime()
         const milisec23_59 = 84924000
         const dateCheck = dueDateInMilisec + milisec23_59 >= new Date().getTime()
 
-        let userFound = false
+        let accountFound = false
         let enoughBalance = false
-        for (const i of users) {
+        for (const i of accounts) {
             if (i.cpf === cpf) {
-                userFound = true
+                accountFound = true
                 if (i.balance >= amount) {
                     enoughBalance = true
                     i.transactions.push({
@@ -118,43 +119,97 @@ app.put("/user/pay", (req: Request, res: Response) => {
         if (!dateCheck) {
             throw new Error("Overdue bills can't be accepted.")
         }
-        if (!userFound) {
-            throw new Error("User not found.")
+        if (!accountFound) {
+            throw new Error("account not found.")
         }
         if (!enoughBalance) {
             throw new Error("Not enough balance.")
         }
-        console.log("New transaction added.")
-        res.status(200).send(users)
+        res.status(200).send(accounts)
     } catch (error: any) {
-        res.status(errorCode).send(error.message)
+        res.status(401).send(error.message)
     }
 })
 
-app.put("/user/update-balance", (req: Request, res: Response) => {
+// Update account balance according to transactions history
+app.put("/account/update-balance", (req: Request, res: Response) => {
     const cpf = req.body.cpf
 
-    let userFound = false
-    for (const user of users) {
-        if (user.cpf === cpf) {
-            userFound = true
+    let accountFound = false
+    for (const account of accounts) {
+        if (account.cpf === cpf) {
+            accountFound = true
             let sumTransactions = 0
-            for (const transaction of user.transactions) {
+            for (const transaction of account.transactions) {
                 if (new Date(transaction.date) < new Date()) {
-                    sumTransactions += transaction.amount
+                    account.balance += transaction.amount
                 }
             }
-            user.balance -= sumTransactions
+            account.balance -= sumTransactions
         }
     }
-    if (userFound) {
-        console.log("User balance updated.")
-        res.status(200).send(users)
+    if (accountFound) {
+        res.status(200).send(accounts)
     } else {
-        res.status(400).send("No user found.")
+        res.status(400).send("No account found.")
     }
 })
 
+// # Add transfer between accounts to transactions history
+app.post("/transfer", (req: Request, res: Response) => {
+    const senderName = req.body.senderName
+    const senderCpf = req.body.senderCpf
+    const recipientName = req.body.recipientName
+    const recipientCpf = req.body.recipientCpf
+    const amount = req.body.amount
+
+    let senderFound = false
+    let recipientFound = false
+    try {
+        for (const account of accounts) {
+            if (account.name === senderName && account.cpf === senderCpf) {
+                senderFound = true
+            }
+            if (account.name === recipientName && account.cpf === recipientCpf) {
+                recipientFound = true
+            }
+        }
+        let senderHasBalance = false
+        if (senderFound && recipientFound) {
+            for (const account of accounts) {
+                if (account.name === senderName && account.cpf === senderCpf) {
+                    if (account.balance >= amount) {
+                        senderHasBalance = true
+                        account.transactions.push({
+                            date: Date(),
+                            amount: -amount,
+                            description: `Transfer sent to ${recipientName}`
+                        })
+                    }
+                }
+                if (account.name === recipientName && account.cpf === recipientCpf && senderHasBalance) {
+                    account.transactions.push({
+                        date: Date(),
+                        amount: amount,
+                        description: `Transfer received from ${senderName}`
+                    })
+                }
+            }
+        }
+        if (!senderFound) {
+            throw new Error("Sender account not found.")
+        }
+        if (!recipientFound) {
+            throw new Error("Recipient account not found.")
+        }
+        if (!senderHasBalance) {
+            throw new Error("Sender balance not enough.")
+        }
+        res.status(200).send(accounts)
+    } catch (error: any) {
+        res.status(401).send(error.message)
+    }
+})
 
 app.listen(3003, () => {
     console.log("Server is running in http://localhost:3003")

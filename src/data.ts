@@ -12,7 +12,7 @@ export type userAccount = {
     transactions: Transaction[]
 }
 
-export let users: userAccount[] = [
+export let accounts: userAccount[] = [
     {
         name: 'Maria',
         cpf: 12345678901,
@@ -21,13 +21,13 @@ export let users: userAccount[] = [
         transactions: [
             {
                 date: '02/02/2002',
-                amount: 10,
-                description: 'Mercado'
+                amount: -10,
+                description: 'Groceries'
             }
         ]
     },
     {
-        name: 'Martha',
+        name: 'Belle',
         cpf: 23456789123,
         birthdate: '10/02/1960',
         balance: 100,
@@ -35,35 +35,35 @@ export let users: userAccount[] = [
             {
                 date: '01/05/2000',
                 amount: 50,
-                description: 'Pet-shop'
+                description: 'Deposit in cash'
             },
             {
                 date: '12/07/2024',
-                amount: 15,
-                description: 'Hot-dog'
+                amount: -15,
+                description: 'Amazon Prime'
             }
         ]
     },
     {
-        name: 'Eva',
+        name: 'Mel',
         cpf: 34567891234,
         birthdate: '25/07/1975',
-        balance: 550,
+        balance: 1500,
         transactions: [
             {
                 date: '03/09/2021',
-                amount: 90,
+                amount: -90,
                 description: 'Pizza'
             },
             {
                 date: '04/08/2001',
-                amount: 101,
-                description: 'Calça jeans'
+                amount: 300,
+                description: 'Deposit in cash'
             },
             {
                 date: '02/09/2023',
-                amount: 500,
-                description: 'Vinhos'
+                amount: -500,
+                description: 'Wines'
             }
         ]
     }
