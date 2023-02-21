@@ -8,17 +8,20 @@ O projeto conta com um mock de banco de bados nomeado ***data.ts***. O projeto p
 O arquivo ***request.rest*** incluso nos arquivos do repositório permite o teste e exame dos resultados dos endpoints.
 </br>
 
+### Como usar
+- Clone o repositório
+- Rode `npm i` (ou equivalente) para instalar as dependências
+- Teste os endpoints através do arquivo request.rest, Postman ou equivalente.
 
-* Dependências:
-	* ts-node-dev
-	* Express
-	* Cors
-	* Typescript
+### Dependências:
+* ts-node-dev
+* Express
+* Cors
+* Typescript
 </br>
 
 
 Lista de endpoints disponíveis:
-
 
 * Get all accounts
 	- Método: **GET**
@@ -79,4 +82,4 @@ Lista de endpoints disponíveis:
 </br>
 
   ---
-  :computer: Desenvolvido por: Rafael Castro
+  :computer: Desenvolvido por: **Rafael Castro**.
